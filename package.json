@@ -1,0 +1,29 @@
+{
+  "name": "graphql-typescript-types",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@graphql-codegen/core": "^4.0.2",
+    "@graphql-codegen/typed-document-node": "^5.0.9",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
+    "@graphql-codegen/typescript-operations": "^4.2.3",
+    "@graphql-codegen/typescript-resolvers": "^4.2.1",
+    "@graphql-tools/utils": "^10.3.2",
+    "ajv": "^8.17.1",
+    "commander": "^12.1.0",
+    "graphql": "^16.9.0",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12"
+  }
+}
