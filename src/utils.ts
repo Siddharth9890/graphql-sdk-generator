@@ -76,25 +76,26 @@ export async function mkdir(
 }
 
 export async function deleteFolderIfExists(dir: string) {
-  if (await pathExists(dir)) {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    const results = await Promise.allSettled(
-      entries.map((entry) => {
-        const fullPath = join(dir, entry.name);
-        if (entry.isDirectory()) {
-          return deleteFolderIfExists(fullPath);
-        } else {
-          return fs.unlink(fullPath);
-        }
-      })
-    );
-    for (const result of results) {
-      if (result.status === "rejected" && result.reason.code !== "ENOENT") {
-        throw result.reason;
-      }
-    }
-    await fs.rmdir(dir);
-  }
+  console.log(dir);
+  // if (await pathExists(dir)) {
+  //   const entries = await fs.readdir(dir, { withFileTypes: true });
+  //   const results = await Promise.allSettled(
+  //     entries.map((entry) => {
+  //       const fullPath = join(dir, entry.name);
+  //       if (entry.isDirectory()) {
+  //         return deleteFolderIfExists(fullPath);
+  //       } else {
+  //         return fs.unlink(fullPath);
+  //       }
+  //     })
+  //   );
+  //   for (const result of results) {
+  //     if (result.status === "rejected" && result.reason.code !== "ENOENT") {
+  //       throw result.reason;
+  //     }
+  //   }
+  //   await fs.rmdir(dir);
+  // }
 }
 
 const tempMap = new Map();

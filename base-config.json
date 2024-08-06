@@ -1,6 +1,5 @@
 {
-  "baseDirectory": "",
-  "url": "",
+  "url": "https://v3-dev.protocol.mygateway.xyz/graphql",
   "sdkName": "gaetway",
   "fileType": "ts",
   "fetchMethod": "POST",

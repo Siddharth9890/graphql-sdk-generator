@@ -12,9 +12,9 @@ import {
 } from "./types";
 import { generateSdk } from "./generateCode/generateSDK";
 
-// take these as arguments
-// base directory optionall if not provided will create near to package.json
 // change variable name like queryqueryme
+// strict json validation
+// operation field name
 
 const ajv = new Ajv({ useDefaults: true });
 const program = new Command();
@@ -22,7 +22,7 @@ const program = new Command();
 const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
   type: "object",
   properties: {
-    baseDirectory: { type: "string", default: "../", nullable: true },
+    baseDirectory: { type: "string", default: "./", nullable: true },
     url: { type: "string" },
     sdkName: { type: "string" },
     fileType: { type: "string" },
@@ -54,13 +54,13 @@ const init = async () => {
     //   .description(
     //     "CLI tool that takes a config file, validates it, and performs actions"
     //   )
-    //   .requiredOption("-c, --config <path>", "Path to config file")
+    //   .requiredOption("-c, --configPath <path>", "Path to config file")
     //   .parse(process.argv);
 
-    const options = program.opts<{ config: string }>();
+    const options = program.opts<{ configPath: string }>();
+    options.configPath = "./base-config.json";
 
-    // const configPath = path.resolve(process.cwd(), options.config);
-    const configPath = path.resolve(process.cwd(), "./base-config.json");
+    const configPath = path.resolve(process.cwd(), options.configPath);
     let config: GraphqlTypescriptParsedConfig;
 
     const configFile = await fs.readFile(configPath, "utf-8");
@@ -69,20 +69,28 @@ const init = async () => {
     const validate = ajv.compile(schema);
     const valid = validate(config);
 
+    if (!config.baseDirectory) {
+      config.baseDirectory = options.configPath;
+    }
+
     if (config.debug) {
-      console.log("\n\n -----------------------------");
+      console.log("\n-----------------------------");
       console.debug("Config values received: ", config);
-      console.log("\n\n -----------------------------");
+      console.log("\n-----------------------------");
     }
 
     if (!valid) {
+      console.log("\n-----------------------------");
       console.error("Invalid configuration:", validate.errors);
+      console.log("\n-----------------------------");
       process.exit(1);
     }
 
     generateSdk(config);
   } catch (error: any) {
-    console.error("Error reading or parsing config file:", error);
+    console.log("\n-----------------------------");
+    console.error("Something went wrong!:", error);
+    console.log("\n-----------------------------");
     process.exit(1);
   }
 };

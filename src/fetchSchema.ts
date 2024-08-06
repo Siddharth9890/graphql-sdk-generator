@@ -19,12 +19,26 @@ export async function fetchAndGetUnifiedSchema(
         "application/graphql-response+json, application/json, multipart/mixed",
       "content-type": "application/json",
     };
-    
+
     const response = await fetch(config.url, {
       method: config.fetchMethod,
       headers: { ...defaultHeaders, ...config.headers },
       body: JSON.stringify({ query: getIntrospectionQuery() }),
     });
+
+    if (config.debug) {
+      console.log("\n-----------------------------");
+      console.log(`URL: ${config.url}`);
+      console.log(`Method: ${config.fetchMethod}`);
+      console.log("Headers:");
+      for (const [key, value] of Object.entries({
+        ...defaultHeaders,
+        ...config.headers,
+      })) {
+        console.log(`${key}: ${value}`);
+      }
+      console.log("\n-----------------------------");
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
