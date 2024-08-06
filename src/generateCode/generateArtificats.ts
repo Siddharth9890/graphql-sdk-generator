@@ -13,7 +13,7 @@ import {
   printWithCache,
   writeFile,
   generateOperations,
-} from "./utils";
+} from "../utils";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
 import { generateTypesForApi } from "./generateTypes";
 import { compileTS } from "./compileTS";
@@ -38,7 +38,9 @@ export async function generateTsArtifacts({
   fileType: "js" | "ts";
 }) {
   const artifactsDir = join(baseDir, artifactsDirectory);
+
   console.log("Generating index file in TypeScript");
+
   for (const rawSource of rawSources) {
     const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(
       rawSource

@@ -1,34 +1,28 @@
-import { deleteFolderIfExists } from "./utils";
-import { generateTsArtifacts } from "./generateArtificats";
-import path, { join } from "path";
+#!/usr/bin/env node
+
+import fs from "fs/promises";
+import path from "path";
+
 import Ajv, { JSONSchemaType } from "ajv";
 import { Command } from "commander";
-import { fetchAndGetUnifiedSchema } from "./fetchSchema";
+
+import {
+  GraphqlTypescriptInputConfig,
+  GraphqlTypescriptParsedConfig,
+} from "./types";
+import { generateSdk } from "./generateCode/generateSDK";
 
 // take these as arguments
 // base directory optionall if not provided will create near to package.json
-// need schmea.graphql by default true can set to false
 // change variable name like queryqueryme
 
 const ajv = new Ajv({ useDefaults: true });
 const program = new Command();
 
-export interface Config {
-  baseDirectory?: string;
-  url: string;
-  directoryName?: string;
-  sdkName: string;
-  depth?: number;
-  toGenerateSchemaFile?: boolean;
-  fileType: "js" | "ts";
-  headers?: Record<string, string>;
-  fetchMethod: "GET" | "POST";
-}
-
-const schema: JSONSchemaType<Config> = {
+const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
   type: "object",
   properties: {
-    baseDirectory: { type: "string", default: "", nullable: true },
+    baseDirectory: { type: "string", default: "../", nullable: true },
     url: { type: "string" },
     sdkName: { type: "string" },
     fileType: { type: "string" },
@@ -39,6 +33,7 @@ const schema: JSONSchemaType<Config> = {
       nullable: true,
     },
     depth: { type: "integer", default: 2, nullable: true },
+    debug: { type: "boolean", default: false, nullable: true },
     toGenerateSchemaFile: { type: "boolean", default: true, nullable: true },
     headers: {
       type: "object",
@@ -48,31 +43,48 @@ const schema: JSONSchemaType<Config> = {
       required: [] as const,
     },
   },
-  required: ["url", "sdkName"],
+  required: ["url", "sdkName", "fetchMethod", "fileType"],
   additionalProperties: false,
 };
 
-async function generateSdk({ config }: { config: Config }) {
+const init = async () => {
   try {
-    path.resolve();
-    await deleteFolderIfExists(join(__dirname, "..", "gatewaySdk"));
+    // program
+    //   .version("1.0.0")
+    //   .description(
+    //     "CLI tool that takes a config file, validates it, and performs actions"
+    //   )
+    //   .requiredOption("-c, --config <path>", "Path to config file")
+    //   .parse(process.argv);
 
-    const { rawSource, unifiedSchema } = await fetchAndGetUnifiedSchema({
-      config,
-    });
+    const options = program.opts<{ config: string }>();
 
-    generateTsArtifacts({
-      baseDir: join(__dirname, ".."),
-      artifactsDirectory: "gatewaySdk",
-      fileType: "ts",
-      rawSources: [rawSource],
-      setDepth: 2,
-      unifiedSchema,
-      sdkName: "GatewaySDK",
-    });
-  } catch (error) {
-    console.log("Error in generateSdk: ", error);
+    // const configPath = path.resolve(process.cwd(), options.config);
+    const configPath = path.resolve(process.cwd(), "./base-config.json");
+    let config: GraphqlTypescriptParsedConfig;
+
+    const configFile = await fs.readFile(configPath, "utf-8");
+    config = JSON.parse(configFile) as GraphqlTypescriptParsedConfig;
+
+    const validate = ajv.compile(schema);
+    const valid = validate(config);
+
+    if (config.debug) {
+      console.log("\n\n -----------------------------");
+      console.debug("Config values received: ", config);
+      console.log("\n\n -----------------------------");
+    }
+
+    if (!valid) {
+      console.error("Invalid configuration:", validate.errors);
+      process.exit(1);
+    }
+
+    generateSdk(config);
+  } catch (error: any) {
+    console.error("Error reading or parsing config file:", error);
+    process.exit(1);
   }
-}
+};
 
-generateSdk();
+init();

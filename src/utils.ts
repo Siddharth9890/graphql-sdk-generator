@@ -77,8 +77,9 @@ export async function mkdir(
 
 export async function deleteFolderIfExists(path: string) {
   try {
+    console.log(path);
     await fs.access(path);
-    await fs.rmdir(path, { recursive: true });
+    // await fs.rmdir(path, { recursive: true });
     console.log("Folder deleted successfully");
   } catch (err: any) {
     if (err.code !== "ENOENT") {

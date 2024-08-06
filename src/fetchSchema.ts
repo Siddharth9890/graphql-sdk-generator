@@ -5,24 +5,24 @@ import {
   buildClientSchema,
 } from "graphql";
 import { getUnifiedSchema } from "./utils";
-import { Config } from ".";
+import { GraphqlTypescriptParsedConfig } from "./types";
 
-export async function fetchAndGetUnifiedSchema({
-  config,
-}: {
-  config: Config;
-}): Promise<{
+export async function fetchAndGetUnifiedSchema(
+  config: GraphqlTypescriptParsedConfig
+): Promise<{
   unifiedSchema: GraphQLSchema;
   rawSource: IntrospectionQuery;
 }> {
   try {
+    const defaultHeaders = {
+      accept:
+        "application/graphql-response+json, application/json, multipart/mixed",
+      "content-type": "application/json",
+    };
+    
     const response = await fetch(config.url, {
       method: config.fetchMethod,
-      headers: {
-        accept:
-          "application/graphql-response+json, application/json, multipart/mixed",
-        "content-type": "application/json",
-      },
+      headers: { ...defaultHeaders, ...config.headers },
       body: JSON.stringify({ query: getIntrospectionQuery() }),
     });
 
