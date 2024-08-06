@@ -18,6 +18,7 @@ export async function generateSdk(config: GraphqlTypescriptParsedConfig) {
       setDepth: config.depth,
       unifiedSchema,
       sdkName: config.sdkName,
+      toGenerateSchemaFile: config.toGenerateSchemaFile,
     });
   } catch (error) {
     console.error("Error in generateSdk: ", error);

@@ -28,6 +28,7 @@ export async function generateTsArtifacts({
   setDepth,
   fileType,
   sdkName,
+  toGenerateSchemaFile,
 }: {
   unifiedSchema: GraphQLSchema;
   rawSources: readonly IntrospectionQuery[];
@@ -36,20 +37,23 @@ export async function generateTsArtifacts({
   artifactsDirectory: string;
   setDepth: number;
   fileType: "js" | "ts";
+  toGenerateSchemaFile: boolean;
 }) {
   const artifactsDir = join(baseDir, artifactsDirectory);
 
   console.log("Generating index file in TypeScript");
 
-  for (const rawSource of rawSources) {
-    const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(
-      rawSource
-    );
-    const sdl = printSchemaWithDirectives(transformedSchema);
-    await writeFile(
-      join(artifactsDir, `sources/${sdkName}/schema.graphql`),
-      sdl
-    );
+  if (toGenerateSchemaFile) {
+    for (const rawSource of rawSources) {
+      const transformedSchema = (unifiedSchema.extensions as any).sourceMap.get(
+        rawSource
+      );
+      const sdl = printSchemaWithDirectives(transformedSchema);
+      await writeFile(
+        join(artifactsDir, `sources/${sdkName}/schema.graphql`),
+        sdl
+      );
+    }
   }
   const documentsInput = generateOperations(unifiedSchema, setDepth);
 

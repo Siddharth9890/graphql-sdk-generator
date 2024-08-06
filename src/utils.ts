@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { dirname as getDirname } from "path";
+import { dirname as getDirname, join } from "path";
 import { DocumentNode, print } from "graphql";
 import {
   mapSchema,
@@ -75,16 +75,25 @@ export async function mkdir(
   }
 }
 
-export async function deleteFolderIfExists(path: string) {
-  try {
-    console.log(path);
-    await fs.access(path);
-    // await fs.rmdir(path, { recursive: true });
-    console.log("Folder deleted successfully");
-  } catch (err: any) {
-    if (err.code !== "ENOENT") {
-      console.error(`Error deleting folder: ${err}`);
+export async function deleteFolderIfExists(dir: string) {
+  if (await pathExists(dir)) {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const results = await Promise.allSettled(
+      entries.map((entry) => {
+        const fullPath = join(dir, entry.name);
+        if (entry.isDirectory()) {
+          return deleteFolderIfExists(fullPath);
+        } else {
+          return fs.unlink(fullPath);
+        }
+      })
+    );
+    for (const result of results) {
+      if (result.status === "rejected" && result.reason.code !== "ENOENT") {
+        throw result.reason;
+      }
     }
+    await fs.rmdir(dir);
   }
 }
 

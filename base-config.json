@@ -1,0 +1,9 @@
+{
+  "baseDirectory": "",
+  "url": "",
+  "sdkName": "gaetway",
+  "fileType": "ts",
+  "fetchMethod": "POST",
+  "headers": { "x-api-key": "f9p_9z3V3WZfv3IT_fnFTSXBxlAmhhz-" },
+  "debug": true
+}
