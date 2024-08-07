@@ -4,12 +4,12 @@ import { DocumentNode, print } from "graphql";
 import {
   mapSchema,
   memoize1,
-  buildOperationNodeForField,
   getRootTypeMap,
   parseGraphQLSDL,
 } from "@graphql-tools/utils";
 import { GraphQLSchema } from "graphql";
 import { MakeDirectoryOptions } from "fs";
+import { buildOperationNodeForField } from "./generateCode/customNaming";
 
 export function getUnifiedSchema(rawSource: GraphQLSchema): GraphQLSchema {
   let schema = rawSource;
@@ -75,27 +75,43 @@ export async function mkdir(
   }
 }
 
-export async function deleteFolderIfExists(dir: string) {
-  console.log(dir);
-  // if (await pathExists(dir)) {
-  //   const entries = await fs.readdir(dir, { withFileTypes: true });
-  //   const results = await Promise.allSettled(
-  //     entries.map((entry) => {
-  //       const fullPath = join(dir, entry.name);
-  //       if (entry.isDirectory()) {
-  //         return deleteFolderIfExists(fullPath);
-  //       } else {
-  //         return fs.unlink(fullPath);
-  //       }
-  //     })
-  //   );
-  //   for (const result of results) {
-  //     if (result.status === "rejected" && result.reason.code !== "ENOENT") {
-  //       throw result.reason;
-  //     }
-  //   }
-  //   await fs.rmdir(dir);
-  // }
+export async function deleteFolderIfExists(dir: string): Promise<void> {
+  try {
+    const pathExists = async (path: string): Promise<boolean> => {
+      try {
+        await fs.access(path);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    if (await pathExists(dir)) {
+      console.log(`Deleting ${dir}.`);
+
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      const results = await Promise.allSettled(
+        entries.map((entry) => {
+          const fullPath = join(dir, entry.name);
+          if (entry.isDirectory()) {
+            return deleteFolderIfExists(fullPath);
+          } else {
+            return fs.unlink(fullPath);
+          }
+        })
+      );
+      for (const result of results) {
+        if (result.status === "rejected" && result.reason.code !== "ENOENT") {
+          throw result.reason;
+        }
+      }
+      await fs.rmdir(dir);
+    } else {
+      console.log(`Directory ${dir} does not exist.`);
+    }
+  } catch (error: any) {
+    console.error(`Error deleting folder: ${error}`);
+  }
 }
 
 const tempMap = new Map();
@@ -118,6 +134,7 @@ export function generateOperations(
 ): any[] {
   const sources: any[] = [];
   const rootTypeMap = getRootTypeMap(schema);
+
   for (const [operationType, rootType] of rootTypeMap) {
     const fieldMap = rootType.getFields();
     for (const fieldName in fieldMap) {

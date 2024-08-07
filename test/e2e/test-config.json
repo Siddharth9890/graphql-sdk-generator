@@ -1,0 +1,7 @@
+{
+  "url": "http://example.com",
+  "sdkName": "example-sdk",
+  "fetchMethod": "GET",
+  "fileType": "json",
+  "baseDirectory": "/Users/siddharth/developer/personal/graphql-typescript-types/test/e2e/test-dir"
+}

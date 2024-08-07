@@ -12,9 +12,7 @@ import {
 } from "./types";
 import { generateSdk } from "./generateCode/generateSDK";
 
-// change variable name like queryqueryme
-// strict json validation
-// operation field name
+
 
 const ajv = new Ajv({ useDefaults: true });
 const program = new Command();
@@ -49,13 +47,13 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
 
 const init = async () => {
   try {
-    // program
-    //   .version("1.0.0")
-    //   .description(
-    //     "CLI tool that takes a config file, validates it, and performs actions"
-    //   )
-    //   .requiredOption("-c, --configPath <path>", "Path to config file")
-    //   .parse(process.argv);
+    program
+      .version("1.0.0")
+      .description(
+        "Graphql Typescript Types a CLI tool that generates ready to use SDK using Graphql URL."
+      )
+      .requiredOption("-c, --configPath <path>", "Path to config file")
+      .parse(process.argv);
 
     const options = program.opts<{ configPath: string }>();
     options.configPath = "./base-config.json";
@@ -86,8 +84,8 @@ const init = async () => {
       process.exit(1);
     }
 
-    generateSdk(config);
-  } catch (error: any) {
+    await generateSdk(config);
+  } catch (error) {
     console.log("\n-----------------------------");
     console.error("Something went wrong!:", error);
     console.log("\n-----------------------------");

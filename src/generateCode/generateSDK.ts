@@ -6,12 +6,12 @@ import { generateTsArtifacts } from "./generateArtificats";
 
 export async function generateSdk(config: GraphqlTypescriptParsedConfig) {
   try {
-    await deleteFolderIfExists(join(process.cwd(), config.baseDirectory));
+    await deleteFolderIfExists(join(config.baseDirectory, config.directoryName));
 
     const { rawSource, unifiedSchema } = await fetchAndGetUnifiedSchema(config);
 
-    generateTsArtifacts({
-      baseDir: join(process.cwd(), config.baseDirectory),
+    await generateTsArtifacts({
+      baseDir: join(config.baseDirectory, config.directoryName),
       artifactsDirectory: config.directoryName,
       fileType: config.fileType,
       rawSources: [rawSource],
