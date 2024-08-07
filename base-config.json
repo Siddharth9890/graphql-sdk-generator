@@ -1,8 +1,8 @@
 {
-  "url": "https://v3-dev.protocol.mygateway.xyz/graphql",
-  "sdkName": "gaetway",
+  "url": "",
+  "sdkName": "test",
   "fileType": "ts",
   "fetchMethod": "POST",
-  "headers": { "x-api-key": "f9p_9z3V3WZfv3IT_fnFTSXBxlAmhhz-" },
+  "headers": { "x-api-key": "sample-" },
   "debug": true
 }
