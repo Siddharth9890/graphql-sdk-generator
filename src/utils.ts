@@ -1,21 +1,21 @@
-import fs from "fs/promises";
-import { dirname as getDirname, join } from "path";
-import { DocumentNode, print } from "graphql";
+import fs from 'fs/promises';
+import { dirname as getDirname, join } from 'path';
+import { DocumentNode, print } from 'graphql';
 import {
   mapSchema,
   memoize1,
   getRootTypeMap,
   parseGraphQLSDL,
-} from "@graphql-tools/utils";
-import { GraphQLSchema } from "graphql";
-import { MakeDirectoryOptions } from "fs";
-import { buildOperationNodeForField } from "./generateCode/customNaming";
+} from '@graphql-tools/utils';
+import { GraphQLSchema } from 'graphql';
+import { MakeDirectoryOptions } from 'fs';
+import { buildOperationNodeForField } from './generateCode/customNaming';
 
 export function getUnifiedSchema(rawSource: GraphQLSchema): GraphQLSchema {
-  let schema = rawSource;
+  const schema = rawSource;
 
   schema.extensions = schema.extensions || {};
-  Object.defineProperty(schema.extensions, "sourceMap", {
+  Object.defineProperty(schema.extensions, 'sourceMap', {
     get: () => {
       return {
         get() {
@@ -37,7 +37,7 @@ export async function pathExists(path: string) {
     await fs.stat(path);
     return true;
   } catch (e: any) {
-    if (e.code === "ENOENT") {
+    if (e.code === 'ENOENT') {
       return false;
     } else {
       throw e;
@@ -49,14 +49,14 @@ export function writeJSON<T>(
   path: string,
   data: T,
   replacer?: (this: any, key: string, value: any) => any,
-  space?: string | number
+  space?: string | number,
 ) {
   const stringified = JSON.stringify(data, replacer, space);
-  return writeFile(path, stringified, "utf-8");
+  return writeFile(path, stringified, 'utf-8');
 }
 
 export const writeFile: typeof fs.writeFile = async (path, ...args) => {
-  if (typeof path === "string") {
+  if (typeof path === 'string') {
     const containingDir = getDirname(path);
     if (!(await pathExists(containingDir))) {
       await mkdir(containingDir);
@@ -67,7 +67,7 @@ export const writeFile: typeof fs.writeFile = async (path, ...args) => {
 
 export async function mkdir(
   path: string,
-  options: MakeDirectoryOptions = { recursive: true }
+  options: MakeDirectoryOptions = { recursive: true },
 ) {
   const ifExists = await pathExists(path);
   if (!ifExists) {
@@ -98,10 +98,10 @@ export async function deleteFolderIfExists(dir: string): Promise<void> {
           } else {
             return fs.unlink(fullPath);
           }
-        })
+        }),
       );
       for (const result of results) {
-        if (result.status === "rejected" && result.reason.code !== "ENOENT") {
+        if (result.status === 'rejected' && result.reason.code !== 'ENOENT') {
           throw result.reason;
         }
       }
@@ -117,7 +117,7 @@ export async function deleteFolderIfExists(dir: string): Promise<void> {
 const tempMap = new Map();
 
 export const printWithCache = memoize1(function printWithCache(
-  document: DocumentNode
+  document: DocumentNode,
 ): string {
   const stringifedDocumentJson = JSON.stringify(document);
   let sdl: string = tempMap.get(stringifedDocumentJson);
@@ -130,7 +130,7 @@ export const printWithCache = memoize1(function printWithCache(
 
 export function generateOperations(
   schema: GraphQLSchema,
-  selectionSetDepth: number
+  selectionSetDepth: number,
 ): any[] {
   const sources: any[] = [];
   const rootTypeMap = getRootTypeMap(schema);

@@ -1,6 +1,6 @@
-import { codegen } from "@graphql-codegen/core";
-import { GraphQLSchema } from "graphql";
-import * as tsBasePlugin from "@graphql-codegen/typescript";
+import { codegen } from '@graphql-codegen/core';
+import { GraphQLSchema } from 'graphql';
+import * as tsBasePlugin from '@graphql-codegen/typescript';
 
 export async function generateTypesForApi(options: {
   schema: GraphQLSchema;
@@ -8,12 +8,12 @@ export async function generateTypesForApi(options: {
 }) {
   const config = {
     skipTypename: true,
-    namingConvention: "keep",
+    namingConvention: 'keep',
     enumsAsTypes: true,
     ignoreEnumValuesFromSchema: true,
   };
   const baseTypes = await codegen({
-    filename: options.name + "_types.ts",
+    filename: options.name + '_types.ts',
     documents: [],
     config,
     schemaAst: options.schema,

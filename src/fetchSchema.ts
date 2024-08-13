@@ -3,12 +3,12 @@ import {
   IntrospectionQuery,
   getIntrospectionQuery,
   buildClientSchema,
-} from "graphql";
-import { getUnifiedSchema } from "./utils";
-import { GraphqlTypescriptParsedConfig } from "./types";
+} from 'graphql';
+import { getUnifiedSchema } from './utils';
+import { GraphqlTypescriptParsedConfig } from './types';
 
 export async function fetchAndGetUnifiedSchema(
-  config: GraphqlTypescriptParsedConfig
+  config: GraphqlTypescriptParsedConfig,
 ): Promise<{
   unifiedSchema: GraphQLSchema;
   rawSource: IntrospectionQuery;
@@ -16,8 +16,8 @@ export async function fetchAndGetUnifiedSchema(
   try {
     const defaultHeaders = {
       accept:
-        "application/graphql-response+json, application/json, multipart/mixed",
-      "content-type": "application/json",
+        'application/graphql-response+json, application/json, multipart/mixed',
+      'content-type': 'application/json',
     };
 
     const response = await fetch(config.url, {
@@ -27,17 +27,17 @@ export async function fetchAndGetUnifiedSchema(
     });
 
     if (config.debug) {
-      console.log("\n-----------------------------");
+      console.log('\n-----------------------------');
       console.log(`URL: ${config.url}`);
       console.log(`Method: ${config.fetchMethod}`);
-      console.log("Headers:");
+      console.log('Headers:');
       for (const [key, value] of Object.entries({
         ...defaultHeaders,
         ...config.headers,
       })) {
         console.log(`${key}: ${value}`);
       }
-      console.log("\n-----------------------------");
+      console.log('\n-----------------------------');
     }
 
     if (!response.ok) {

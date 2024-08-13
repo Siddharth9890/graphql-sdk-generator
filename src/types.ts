@@ -2,8 +2,8 @@ export interface GraphqlTypescriptInputConfig {
   baseDirectory?: string;
   url: string;
   sdkName: string;
-  fileType: "js" | "ts";
-  fetchMethod: "POST";
+  fileType: 'js' | 'ts';
+  fetchMethod: 'POST';
   directoryName?: string;
   depth?: number;
   toGenerateSchemaFile?: boolean;
@@ -15,8 +15,8 @@ export interface GraphqlTypescriptParsedConfig {
   baseDirectory: string;
   url: string;
   sdkName: string;
-  fileType: "js" | "ts";
-  fetchMethod: "POST";
+  fileType: 'js' | 'ts';
+  fetchMethod: 'POST';
   directoryName: string;
   depth: number;
   toGenerateSchemaFile: boolean;

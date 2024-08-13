@@ -1,12 +1,14 @@
-import { join } from "path";
-import { fetchAndGetUnifiedSchema } from "../fetchSchema";
-import { GraphqlTypescriptParsedConfig } from "../types";
-import { deleteFolderIfExists } from "../utils";
-import { generateTsArtifacts } from "./generateArtificats";
+import { join } from 'path';
+import { fetchAndGetUnifiedSchema } from '../fetchSchema';
+import { GraphqlTypescriptParsedConfig } from '../types';
+import { deleteFolderIfExists } from '../utils';
+import { generateTsArtifacts } from './generateArtificats';
 
 export async function generateSdk(config: GraphqlTypescriptParsedConfig) {
   try {
-    await deleteFolderIfExists(join(config.baseDirectory, config.directoryName));
+    await deleteFolderIfExists(
+      join(config.baseDirectory, config.directoryName),
+    );
 
     const { rawSource, unifiedSchema } = await fetchAndGetUnifiedSchema(config);
 
@@ -21,6 +23,6 @@ export async function generateSdk(config: GraphqlTypescriptParsedConfig) {
       toGenerateSchemaFile: config.toGenerateSchemaFile,
     });
   } catch (error) {
-    console.error("Error in generateSdk: ", error);
+    console.error('Error in generateSdk: ', error);
   }
 }

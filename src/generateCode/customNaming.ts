@@ -26,9 +26,9 @@ import {
   SelectionSetNode,
   TypeNode,
   VariableDefinitionNode,
-} from "graphql";
+} from 'graphql';
 
-import { getDefinedRootType, getRootTypeNames } from "@graphql-tools/utils";
+import { getDefinedRootType, getRootTypeNames } from '@graphql-tools/utils';
 
 let operationVariables: VariableDefinitionNode[] = [];
 let fieldTypeMap = new Map();
@@ -80,7 +80,7 @@ export function buildOperationNodeForField({
   resetFieldMap();
 
   const rootTypeNames = getRootTypeNames(schema);
-  
+
   const operationNode = buildOperationAndCollectVariables({
     schema,
     fieldName: field,
@@ -104,11 +104,11 @@ export function buildOperationNodeForField({
 }
 
 function capitalizeFirstWord(name: string) {
-  const words = name.split(" ");
+  const words = name.split(' ');
 
   words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
 
-  return words.join(" ");
+  return words.join(' ');
 }
 
 function buildOperationAndCollectVariables({
@@ -211,7 +211,7 @@ function resolveSelectionSet({
   argNames?: string[];
   rootTypeNames: Set<string>;
 }): SelectionSetNode | void {
-  if (typeof selectedFields === "boolean" && depth > depthLimit) {
+  if (typeof selectedFields === 'boolean' && depth > depthLimit) {
     return;
   }
   if (isUnionType(type)) {
@@ -224,7 +224,7 @@ function resolveSelectionSet({
           (t) =>
             !hasCircularRef([...ancestors, t], {
               depth: circularReferenceDepth,
-            })
+            }),
         )
         .map<InlineFragmentNode>((t) => {
           return {
@@ -254,14 +254,14 @@ function resolveSelectionSet({
           };
         })
         .filter(
-          (fragmentNode) => fragmentNode?.selectionSet?.selections?.length > 0
+          (fragmentNode) => fragmentNode?.selectionSet?.selections?.length > 0,
         ),
     };
   }
 
   if (isInterfaceType(type)) {
     const types = Object.values(schema.getTypeMap()).filter(
-      (t: any) => isObjectType(t) && t.getInterfaces().includes(type)
+      (t: any) => isObjectType(t) && t.getInterfaces().includes(type),
     ) as GraphQLObjectType[];
 
     return {
@@ -271,7 +271,7 @@ function resolveSelectionSet({
           (t) =>
             !hasCircularRef([...ancestors, t], {
               depth: circularReferenceDepth,
-            })
+            }),
         )
         .map<InlineFragmentNode>((t) => {
           return {
@@ -301,7 +301,7 @@ function resolveSelectionSet({
           };
         })
         .filter(
-          (fragmentNode) => fragmentNode?.selectionSet?.selections?.length > 0
+          (fragmentNode) => fragmentNode?.selectionSet?.selections?.length > 0,
         ),
     };
   }
@@ -320,7 +320,7 @@ function resolveSelectionSet({
             kind: Kind.FIELD,
             name: {
               kind: Kind.NAME,
-              value: "id",
+              value: 'id',
             },
           },
         ],
@@ -337,12 +337,12 @@ function resolveSelectionSet({
             [...ancestors, getNamedType(fields[fieldName].type)],
             {
               depth: circularReferenceDepth,
-            }
+            },
           );
         })
         .map((fieldName) => {
           const selectedSubFields =
-            typeof selectedFields === "object"
+            typeof selectedFields === 'object'
               ? selectedFields[fieldName]
               : true;
           if (selectedSubFields) {
@@ -367,7 +367,7 @@ function resolveSelectionSet({
         .filter((f): f is SelectionNode => {
           if (f == null) {
             return false;
-          } else if ("selectionSet" in f) {
+          } else if ('selectionSet' in f) {
             return !!f.selectionSet?.selections?.length;
           }
           return true;
@@ -378,7 +378,7 @@ function resolveSelectionSet({
 
 function resolveVariable(
   arg: GraphQLArgument,
-  name?: string
+  name?: string,
 ): VariableDefinitionNode {
   function resolveVariableType(type: GraphQLList<any>): ListTypeNode;
   function resolveVariableType(type: GraphQLNonNull<any>): NonNullTypeNode;
@@ -422,7 +422,7 @@ function resolveVariable(
 }
 
 function getArgumentName(name: string, path: string[]): string {
-  return [...path, name].join("_");
+  return [...path, name].join('_');
 }
 
 function resolveField({
@@ -497,7 +497,7 @@ function resolveField({
   }
 
   const fieldPath = [...path, field.name];
-  const fieldPathStr = fieldPath.join(".");
+  const fieldPathStr = fieldPath.join('.');
   let fieldName = field.name;
   if (
     fieldTypeMap.has(fieldPathStr) &&
@@ -505,9 +505,9 @@ function resolveField({
   ) {
     fieldName += (field.type as any)
       .toString()
-      .replace("!", "NonNull")
-      .replace("[", "List")
-      .replace("]", "");
+      .replace('!', 'NonNull')
+      .replace('[', 'List')
+      .replace(']', '');
   }
   fieldTypeMap.set(fieldPathStr, field.type.toString());
 
@@ -561,7 +561,7 @@ function hasCircularRef(
     depth: number;
   } = {
     depth: 1,
-  }
+  },
 ): boolean {
   const type = types[types.length - 1];
 

@@ -1,0 +1,30 @@
+name: Run Eslint & Test cases
+
+on:
+  pull_request:
+    branches: ['main', 'develop']
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v3
+      - name: Install pnpm
+        run: npm install -g pnpm@7.33.5
+      - name: Install Project Dependencies
+        run: pnpm install
+      - name: Run Eslint
+        run: pnpm lint
+      - name: Format code
+        run: pnpm format
+      - name: Test project
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -1,10 +1,10 @@
-import { normalize } from "path";
-import ts from "typescript";
+import { normalize } from 'path';
+import ts from 'typescript';
 
 export function compileTS(
   tsFilePath: string,
   module: ts.ModuleKind,
-  outputFilePaths: string[]
+  outputFilePaths: string[],
 ) {
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ESNext,
