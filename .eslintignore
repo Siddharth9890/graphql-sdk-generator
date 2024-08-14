@@ -8,3 +8,4 @@ release.config.js
 .husky/*
 scripts/*
 node_modules/*
+build

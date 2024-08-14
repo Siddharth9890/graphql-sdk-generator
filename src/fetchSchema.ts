@@ -21,7 +21,7 @@ export async function fetchAndGetUnifiedSchema(
     };
 
     const response = await fetch(config.url, {
-      method: config.fetchMethod,
+      method: 'POST',
       headers: { ...defaultHeaders, ...config.headers },
       body: JSON.stringify({ query: getIntrospectionQuery() }),
     });
@@ -29,7 +29,7 @@ export async function fetchAndGetUnifiedSchema(
     if (config.debug) {
       console.log('\n-----------------------------');
       console.log(`URL: ${config.url}`);
-      console.log(`Method: ${config.fetchMethod}`);
+      console.log(`Method: POST`);
       console.log('Headers:');
       for (const [key, value] of Object.entries({
         ...defaultHeaders,
