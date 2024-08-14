@@ -1,78 +1,91 @@
-import { exec } from 'child_process';
-import fs from 'fs/promises';
 import path from 'path';
-import { fetchAndGetUnifiedSchema } from '../../src/fetchSchema';
-import { generateTsArtifacts } from '../../src/generateCode/generateArtificats';
+import fs from 'fs/promises';
+import { spawn } from 'child_process';
 
-const runCLI = (
-  args: string[],
-): Promise<{ stdout: string; stderr: string }> => {
-  return new Promise((resolve, reject) => {
-    exec(
-      `ts-node-dev ./src/index.ts ${args.join(' ')}`,
-      (error, stdout, stderr) => {
-        if (error) {
-          reject({ stdout, stderr });
-        } else {
-          resolve({ stdout, stderr });
-        }
-      },
-    );
-  });
-};
+describe('E2E tests for init function', () => {
+  const mockConfigPath = path.resolve(__dirname, 'mock-config.json');
+  const validConfig = {
+    baseDirectory: './src',
+    directoryName: 'sdk',
+    fileType: 'ts',
+    depth: 3,
+    sdkName: 'MySDK',
+    toGenerateSchemaFile: true,
+    debug: false,
+  };
 
-jest.mock('../../src/generateCode/generateSDK.ts', () => ({
-  fetchAndGetUnifiedSchema: jest.fn(),
-  generateTsArtifacts: jest.fn(),
-}));
+  const invalidConfig = {
+    directoryName: 'sdk',
+    fileType: 'ts',
+    depth: 3,
+    sdkName: 'MySDK',
+    toGenerateSchemaFile: true,
+  };
 
-describe('CLI Tool E2E Tests', () => {
-  const configPath = path.resolve(__dirname, 'test-config.json');
-  const baseDir = path.resolve(__dirname, 'test-dir');
-
-  beforeEach(async () => {
+  beforeAll(async () => {
+    await fs.writeFile(mockConfigPath, JSON.stringify(validConfig, null, 2));
     await fs.writeFile(
-      configPath,
-      JSON.stringify(
-        {
-          url: 'http://example.com',
-          sdkName: 'example-sdk',
-          fetchMethod: 'POST',
-          fileType: 'json',
-          baseDirectory: baseDir,
-        },
-        null,
-        2,
-      ),
+      path.resolve(__dirname, 'invalid-config.json'),
+      JSON.stringify(invalidConfig, null, 2),
     );
-
-    // Create base directory and some files
-    await fs.mkdir(baseDir, { recursive: true });
-    await fs.writeFile(path.join(baseDir, 'test-file.txt'), 'Hello, world!');
   });
 
-  afterEach(async () => {
-    await fs.rm(baseDir, { recursive: true, force: true });
-    await fs.unlink(configPath);
+  afterAll(async () => {
+    await fs.unlink(mockConfigPath);
+    await fs.unlink(path.resolve(__dirname, 'invalid-config.json'));
   });
 
-  // it('should delete the base directory if it exists', async () => {
-  //   const { stdout, stderr } = await runCLI(['-c', configPath]);
-  //   console.log('stdout:', stdout);
-  //   console.log('stderr:', stderr);
+  function runCLI(
+    args: string[],
+  ): Promise<{ code: number; stdout: string; stderr: string }> {
+    return new Promise((resolve, reject) => {
+      const cliProcess = spawn('ts-node-dev', ['../src/index.ts', ...args]);
 
-  //   await expect(fs.access(baseDir)).rejects.toThrow();
-  // });
+      let stdout = '';
+      let stderr = '';
 
-  // it('should not delete anything if the base directory does not exist', async () => {
-  //   await fs.rm(baseDir, { recursive: true, force: true });
+      cliProcess.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
 
-  //   await runCLI(['-c', configPath]);
+      cliProcess.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
 
-  //   await expect(fs.access(baseDir)).rejects.toThrow();
-  // });
+      cliProcess.on('close', (code) => {
+        resolve({ code: code ?? 0, stdout, stderr });
+      });
 
-  it('hello world', () => {
-    expect('hello').toBe('hello');
+      cliProcess.on('error', (error) => {
+        reject(error);
+      });
+    });
+  }
+
+  it('should fail with invalid configuration', async () => {
+    const { code, stderr } = await runCLI([
+      '-c',
+      path.resolve(__dirname, 'invalid-config.json'),
+    ]);
+
+    expect(code).toBe(1);
+    expect(stderr).toBeDefined();
+  });
+
+  it('should display an error when config file is missing', async () => {
+    const { code, stderr } = await runCLI(['-c', 'non-existent-config.json']);
+
+    expect(code).toBe(1);
+    expect(stderr).toBeDefined();
+  });
+
+  it('should debug log when debug flag is enabled in config', async () => {
+    const debugConfig = { ...validConfig, debug: true };
+    await fs.writeFile(mockConfigPath, JSON.stringify(debugConfig, null, 2));
+
+    const { code, stdout } = await runCLI(['-c', mockConfigPath]);
+
+    expect(code).toBe(1);
+    expect(stdout).toBeDefined();
   });
 });

@@ -3,7 +3,6 @@ export interface GraphqlTypescriptInputConfig {
   url: string;
   sdkName: string;
   fileType: 'js' | 'ts';
-  fetchMethod: 'POST';
   directoryName?: string;
   depth?: number;
   toGenerateSchemaFile?: boolean;
@@ -16,7 +15,6 @@ export interface GraphqlTypescriptParsedConfig {
   url: string;
   sdkName: string;
   fileType: 'js' | 'ts';
-  fetchMethod: 'POST';
   directoryName: string;
   depth: number;
   toGenerateSchemaFile: boolean;

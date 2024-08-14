@@ -22,7 +22,6 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
     url: { type: 'string' },
     sdkName: { type: 'string' },
     fileType: { type: 'string' },
-    fetchMethod: { type: 'string' },
     directoryName: {
       type: 'string',
       default: 'graphqlTypescriptTypes',
@@ -39,7 +38,7 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
       required: [] as const,
     },
   },
-  required: ['url', 'sdkName', 'fetchMethod', 'fileType'],
+  required: ['url', 'sdkName', 'fileType'],
   additionalProperties: false,
 };
 

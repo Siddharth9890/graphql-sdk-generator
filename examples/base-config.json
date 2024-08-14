@@ -2,7 +2,6 @@
   "url": "",
   "sdkName": "test",
   "fileType": "ts",
-  "fetchMethod": "POST",
   "headers": { "x-api-key": "sample-" },
   "debug": true
 }
