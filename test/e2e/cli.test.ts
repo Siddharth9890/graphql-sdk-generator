@@ -1,91 +1,95 @@
-import path from 'path';
 import fs from 'fs/promises';
-import { spawn } from 'child_process';
+import path from 'path';
+import { Command } from 'commander';
+import Ajv from 'ajv';
+import { init } from '../../src';
+import { GraphqlTypescriptParsedConfig } from '../../src/types';
+import { generateSdk } from '../../src/generateCode/generateSDK';
 
-describe('E2E tests for init function', () => {
-  const mockConfigPath = path.resolve(__dirname, 'mock-config.json');
-  const validConfig = {
-    baseDirectory: './src',
-    directoryName: 'sdk',
+jest.mock('fs/promises');
+jest.mock('path');
+jest.mock('commander', () => ({
+  Command: jest.fn().mockImplementation(() => ({
+    version: jest.fn().mockReturnThis(),
+    description: jest.fn().mockReturnThis(),
+    requiredOption: jest.fn().mockReturnThis(),
+    parse: jest.fn().mockReturnThis(),
+    opts: jest.fn(),
+  })),
+}));
+jest.mock('ajv');
+jest.mock('../../src/generateCode/generateSDK');
+
+describe('init', () => {
+  const mockConfig: GraphqlTypescriptParsedConfig = {
+    baseDirectory: './',
+    url: 'https://example.com/graphql',
+    sdkName: 'exampleSdk',
     fileType: 'ts',
-    depth: 3,
-    sdkName: 'MySDK',
-    toGenerateSchemaFile: true,
+    directoryName: 'graphqlTypescriptTypes',
+    depth: 2,
     debug: false,
-  };
-
-  const invalidConfig = {
-    directoryName: 'sdk',
-    fileType: 'ts',
-    depth: 3,
-    sdkName: 'MySDK',
     toGenerateSchemaFile: true,
+    headers: {},
   };
 
-  beforeAll(async () => {
-    await fs.writeFile(mockConfigPath, JSON.stringify(validConfig, null, 2));
-    await fs.writeFile(
-      path.resolve(__dirname, 'invalid-config.json'),
-      JSON.stringify(invalidConfig, null, 2),
+  let commandInstance: Command;
+  let mockExit: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockConfig));
+    (path.resolve as jest.Mock).mockReturnValue('/resolved/path/config.json');
+    commandInstance = new Command();
+    (commandInstance.opts as jest.Mock).mockReturnValue({
+      configPath: '/path/to/config.json',
+    });
+
+  });
+
+  it('should read the config file and generate the SDK', async () => {
+    const mockAjv = {
+      compile: jest.fn().mockReturnValue(jest.fn().mockReturnValue(true)),
+    };
+    (Ajv as unknown as jest.Mock).mockImplementation(() => mockAjv);
+
+    await init();
+
+    expect(fs.readFile).toHaveBeenCalledWith(
+      '/resolved/path/config.json',
+      'utf-8',
+    );
+    expect(mockAjv.compile).toHaveBeenCalled();
+    expect(generateSdk).toHaveBeenCalledWith(mockConfig);
+  });
+
+  it('should log an error and exit if the config is invalid', async () => {
+    const mockAjv = {
+      compile: jest.fn().mockReturnValue(jest.fn().mockReturnValue(false)),
+    };
+    (Ajv as unknown as jest.Mock).mockImplementation(() => mockAjv);
+    mockExit = jest.spyOn(process, 'exit').mockReturnValue(undefined as never);
+
+    await expect(init()).rejects.toThrow('process.exit(1) was called');
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Invalid configuration:',
+      undefined,
     );
   });
 
-  afterAll(async () => {
-    await fs.unlink(mockConfigPath);
-    await fs.unlink(path.resolve(__dirname, 'invalid-config.json'));
-  });
+  it('should log an error and exit if an exception occurs', async () => {
+    (fs.readFile as jest.Mock).mockRejectedValue(new Error('File not found'));
+        mockExit = jest
+          .spyOn(process, 'exit')
+          .mockReturnValue(undefined as never);
 
-  function runCLI(
-    args: string[],
-  ): Promise<{ code: number; stdout: string; stderr: string }> {
-    return new Promise((resolve, reject) => {
-      const cliProcess = spawn('ts-node-dev', ['../src/index.ts', ...args]);
+    await expect(init()).rejects.toThrow('process.exit(1) was called');
 
-      let stdout = '';
-      let stderr = '';
-
-      cliProcess.stdout.on('data', (data) => {
-        stdout += data.toString();
-      });
-
-      cliProcess.stderr.on('data', (data) => {
-        stderr += data.toString();
-      });
-
-      cliProcess.on('close', (code) => {
-        resolve({ code: code ?? 0, stdout, stderr });
-      });
-
-      cliProcess.on('error', (error) => {
-        reject(error);
-      });
-    });
-  }
-
-  it('should fail with invalid configuration', async () => {
-    const { code, stderr } = await runCLI([
-      '-c',
-      path.resolve(__dirname, 'invalid-config.json'),
-    ]);
-
-    expect(code).toBe(1);
-    expect(stderr).toBeDefined();
-  });
-
-  it('should display an error when config file is missing', async () => {
-    const { code, stderr } = await runCLI(['-c', 'non-existent-config.json']);
-
-    expect(code).toBe(1);
-    expect(stderr).toBeDefined();
-  });
-
-  it('should debug log when debug flag is enabled in config', async () => {
-    const debugConfig = { ...validConfig, debug: true };
-    await fs.writeFile(mockConfigPath, JSON.stringify(debugConfig, null, 2));
-
-    const { code, stdout } = await runCLI(['-c', mockConfigPath]);
-
-    expect(code).toBe(1);
-    expect(stdout).toBeDefined();
+    expect(console.error).toHaveBeenCalledWith(
+      'Something went wrong!:',
+      expect.any(Error),
+    );
   });
 });

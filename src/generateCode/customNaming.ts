@@ -37,11 +37,11 @@ function addOperationVariable(variable: VariableDefinitionNode) {
   operationVariables.push(variable);
 }
 
-function resetOperationVariables() {
+export function resetOperationVariables() {
   operationVariables = [];
 }
 
-function resetFieldMap() {
+export function resetFieldMap() {
   fieldTypeMap = new Map();
 }
 
@@ -425,7 +425,7 @@ function getArgumentName(name: string, path: string[]): string {
   return [...path, name].join('_');
 }
 
-function resolveField({
+export function resolveField({
   type,
   field,
   models,
@@ -555,7 +555,7 @@ function resolveField({
   };
 }
 
-function hasCircularRef(
+export function hasCircularRef(
   types: GraphQLNamedType[],
   config: {
     depth: number;

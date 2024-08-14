@@ -42,7 +42,7 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
   additionalProperties: false,
 };
 
-const init = async () => {
+export const init = async () => {
   try {
     program
       .version('1.0.0')
