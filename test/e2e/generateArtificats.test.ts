@@ -4,7 +4,8 @@ import { GraphQLSchema, IntrospectionQuery } from 'graphql';
 import ts from 'typescript';
 import { codegen } from '@graphql-codegen/core';
 
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import * as graphqlTools from '@graphql-tools/utils';
+import * as graphqlCodegen from '@graphql-codegen/core';
 import { generateOperations, pathExists, writeFile } from '../../src/utils';
 import { compileTS } from '../../src/generateCode/compileTS';
 import { generateTypesForApi } from '../../src/generateCode/generateTypes';
@@ -14,132 +15,134 @@ import { generateTsArtifacts } from '../../src/generateCode/generateArtificats';
 jest.mock('fs/promises');
 jest.mock('path');
 jest.mock('graphql');
-jest.mock('@graphql-codegen/core');
-jest.mock('@graphql-codegen/typed-document-node');
-jest.mock('@graphql-codegen/typescript');
-jest.mock('@graphql-codegen/typescript-graphql-request');
-jest.mock('@graphql-codegen/typescript-operations');
-jest.mock('@graphql-codegen/typescript-resolvers');
+
+jest.mock('@graphql-codegen/typescript-graphql-request', () => ({
+  plugin: jest.fn(),
+}));
+jest.mock('@graphql-codegen/typescript-operations', () => ({
+  plugin: jest.fn(),
+}));
+jest.mock('@graphql-codegen/typescript-resolvers', () => ({
+  plugin: jest.fn(),
+}));
 jest.mock('../../src/utils');
 jest.mock('../../src/generateCode/compileTS');
 jest.mock('../../src/generateCode/generateTypes');
+jest.mock('@graphql-tools/utils', () => ({
+  printSchemaWithDirectives: jest.fn(),
+}));
 
-// Set up mocks
+jest.mock('../../src/utils', () => ({
+  memoize1: jest.fn(),
+  pathExists: jest.fn(),
+  generateOperations: jest.fn(),
+  writeFile: jest.fn(),
+}));
 
-// Set up mocks
-const fsMock = fs as jest.Mocked<typeof fs>;
-const pathMock = path as jest.Mocked<typeof path>;
-const codegenMock = codegen as jest.MockedFunction<typeof codegen>;
-const printSchemaWithDirectivesMock = jest.fn();
-const generateOperationsMock = generateOperations as jest.MockedFunction<typeof generateOperations>;
-const pathExistsMock = pathExists as jest.MockedFunction<typeof pathExists>;
-const writeFileMock = writeFile as jest.MockedFunction<typeof writeFile>;
-const compileTSMock = compileTS as jest.MockedFunction<typeof compileTS>;
-const generateTypesForApiMock = generateTypesForApi as jest.MockedFunction<typeof generateTypesForApi>;
-
-// Initialize mocks
-beforeEach(() => {
-  jest.clearAllMocks();
-
-  pathMock.join.mockImplementation(join);
-  pathMock.relative.mockImplementation(relative);
-  pathMock.resolve.mockImplementation(resolve);
-
-  fsMock.unlink.mockResolvedValue(undefined);
-  pathExistsMock.mockResolvedValue(true);
-
-  codegenMock.mockResolvedValue('codegen output');
-  printSchemaWithDirectivesMock.mockReturnValue('schema SDL');
-  generateOperationsMock.mockReturnValue([]);
-  writeFileMock.mockResolvedValue(undefined);
-
-  generateTypesForApiMock.mockResolvedValue({
-    identifier: 'id',
-    codeAst: 'type MyType = any;',
-  });
-});
+jest.mock('@graphql-codegen/core', () => ({
+  codegen: jest.fn(),
+  memoize1: jest.fn(),
+}));
+jest.mock('@graphql-codegen/typescript', () => ({
+  plugin: jest.fn(),
+}));
+jest.mock('@graphql-codegen/typed-document-node', () => ({
+  plugin: jest.fn(),
+}));
 
 describe('generateTsArtifacts', () => {
-  const unifiedSchema = {} as GraphQLSchema;
-  const rawSources = [{} as IntrospectionQuery];
-  const baseDir = '/base/dir';
-  const sdkName = 'MySdk';
-  const artifactsDirectory = 'artifacts';
-  const setDepth = 2;
-  const fileType: 'js' | 'ts' = 'ts';
-  const toGenerateSchemaFile = true;
+  const mockSourceMap = new Map([
+    ['source1', 'transformedSchema1'],
+    ['source2', 'transformedSchema2'],
+  ]);
 
-  it('should generate TypeScript artifacts', async () => {
-    await generateTsArtifacts({
-      unifiedSchema,
-      rawSources,
-      baseDir,
-      sdkName,
-      artifactsDirectory,
-      setDepth,
-      fileType,
-      toGenerateSchemaFile,
-    });
+  const mockUnifiedSchema: Partial<GraphQLSchema> = {
+    extensions: {
+      sourceMap: mockSourceMap,
+    },
+  };
 
-    // Verify writeFile is called for schema file
-    expect(writeFileMock).toHaveBeenCalledWith(
-      join(baseDir, artifactsDirectory, `sources/${sdkName}/schema.graphql`),
-      'schema SDL'
+  const mockConfig = {
+    unifiedSchema: mockUnifiedSchema as GraphQLSchema,
+    rawSources: [{} as IntrospectionQuery],
+    baseDir: '/base/dir',
+    sdkName: 'TestSDK',
+    artifactsDirectory: 'artifacts',
+    setDepth: 3,
+    fileType: 'ts' as 'js' | 'ts',
+    toGenerateSchemaFile: true,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
+    (path.relative as jest.Mock).mockReturnValue('relative/path');
+    (pathExists as jest.Mock).mockResolvedValue(true);
+    (graphqlTools.printSchemaWithDirectives as jest.Mock).mockReturnValue(
+      'mock SDL',
     );
-
-    // Verify codegen is called
-    expect(codegenMock).toHaveBeenCalledWith(expect.objectContaining({
-      filename: 'types.ts',
-      documents: [],
-      config: expect.objectContaining({}),
-      schemaAst: unifiedSchema,
-    }));
-
-    // Verify that compileTS is called when fileType is 'ts'
-    if (fileType === 'ts') {
-      expect(compileTSMock).toHaveBeenCalledWith(
-        join(baseDir, artifactsDirectory, 'index.ts'),
-        ts.ModuleKind.CommonJS,
-        [join(baseDir, artifactsDirectory, 'index.js'), join(baseDir, artifactsDirectory, 'index.d.ts')]
-      );
-    }
-
-    // Verify unlink calls
-    expect(fsMock.unlink).toHaveBeenCalledWith(join(baseDir, artifactsDirectory, 'index.js'));
-    expect(fsMock.unlink).toHaveBeenCalledWith(join(baseDir, artifactsDirectory, 'index.ts'));
+    (generateOperations as jest.Mock).mockReturnValue([]);
+    (graphqlCodegen.codegen as jest.Mock).mockResolvedValue(
+      'mock codegen output',
+    );
+    (generateTypesForApi as jest.Mock).mockResolvedValue({
+      identifier: 'mockIdentifier',
+      codeAst: 'mock code AST',
+    });
+    (writeFile as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it('should not compile TypeScript if fileType is js', async () => {
-    await generateTsArtifacts({
-      unifiedSchema,
-      rawSources,
-      baseDir,
-      sdkName,
-      artifactsDirectory,
-      setDepth,
-      fileType: 'js',
-      toGenerateSchemaFile,
-    });
-
-    // Verify that compileTS is not called when fileType is 'js'
-    expect(compileTSMock).not.toHaveBeenCalled();
+  it('should generate schema file when toGenerateSchemaFile is true', async () => {
+    await generateTsArtifacts(mockConfig);
+    expect(writeFile).toHaveBeenCalledWith(
+      '/base/dir/artifacts/sources/TestSDK/schema.graphql',
+      'mock SDL',
+    );
   });
 
-  it('should handle case when tsconfig.json does not exist', async () => {
-    pathExistsMock.mockResolvedValue(false);
+  it('should not generate schema file when toGenerateSchemaFile is false', async () => {
+    await generateTsArtifacts({ ...mockConfig, toGenerateSchemaFile: false });
+    expect(writeFile).not.toHaveBeenCalledWith(
+      '/base/dir/artifacts/sources/TestSDK/schema.graphql',
+      expect.anything(),
+    );
+  });
 
-    await generateTsArtifacts({
-      unifiedSchema,
-      rawSources,
-      baseDir,
-      sdkName,
-      artifactsDirectory,
-      setDepth,
-      fileType,
-      toGenerateSchemaFile,
-    });
+  it('should call codegen with correct parameters', async () => {
+    await generateTsArtifacts(mockConfig);
+    expect(codegen).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filename: 'types.ts',
+        schemaAst: mockConfig.unifiedSchema,
+      }),
+    );
+  });
 
-    // Verify that jobs are not executed when tsconfig.json does not exist
-    expect(compileTSMock).not.toHaveBeenCalled();
+  it('should write generated types file', async () => {
+    await generateTsArtifacts(mockConfig);
+    
+    expect(writeFile).toHaveBeenCalled();
+  });
+
+  it('should compile TS to JS when fileType is js', async () => {
+    await generateTsArtifacts({ ...mockConfig, fileType: 'js' });
+    expect(compileTS).toHaveBeenCalled();
+  });
+
+  it('should not compile TS to JS when fileType is ts', async () => {
+    await generateTsArtifacts(mockConfig);
+    expect(compileTS).not.toHaveBeenCalled();
+  });
+
+  it('should delete index.ts when compiling to JS', async () => {
+    await generateTsArtifacts({ ...mockConfig, fileType: 'js' });
+    expect(fs.unlink).toHaveBeenCalledWith('/base/dir/artifacts/index.ts');
+  });
+
+  it('should not perform any operations if tsconfig.json does not exist', async () => {
+    (pathExists as jest.Mock).mockResolvedValue(false);
+    await generateTsArtifacts(mockConfig);
+    expect(compileTS).not.toHaveBeenCalled();
+    expect(fs.unlink).not.toHaveBeenCalled();
   });
 });

@@ -1,15 +1,17 @@
 import { join } from 'path';
-import { generateSdk } from '../../src/generateCode/generateSDK';
-import { deleteFolderIfExists } from '../../src/utils';
-import { fetchAndGetUnifiedSchema } from '../../src/fetchSchema';
-import { generateTsArtifacts } from '../../src/generateCode/generateArtificats';
 import { GraphqlTypescriptParsedConfig } from '../../src/types';
+import { fetchAndGetUnifiedSchema } from '../../src/fetchSchema';
+import { deleteFolderIfExists } from '../../src/utils';
+import { generateSdk } from '../../src/generateCode/generateSDK';
+import { generateTsArtifacts } from '../../src/generateCode/generateArtificats';
 
-// Mock dependencies
-jest.mock('path');
+// Mock the dependencies
+jest.mock('path', () => ({
+  join: jest.fn((a, b) => `${a}/${b}`),
+}));
 jest.mock('../../src/fetchSchema');
 jest.mock('../../src/utils');
-jest.mock('../../src/generateCode/generateSDK');
+jest.mock('../../src/generateCode/generateArtificats');
 
 describe('generateSdk', () => {
   const mockConfig: GraphqlTypescriptParsedConfig = {
@@ -24,8 +26,14 @@ describe('generateSdk', () => {
     url: '',
   };
 
+  const mockSchemaResult = {
+    rawSource: 'mock raw source',
+    unifiedSchema: 'mock unified schema',
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
+    (fetchAndGetUnifiedSchema as jest.Mock).mockResolvedValue(mockSchemaResult);
   });
 
   it('should call deleteFolderIfExists with correct path', async () => {
@@ -39,12 +47,6 @@ describe('generateSdk', () => {
   });
 
   it('should call generateTsArtifacts with correct parameters', async () => {
-    const mockSchemaResult = {
-      rawSource: 'mock raw source',
-      unifiedSchema: 'mock unified schema',
-    };
-    (fetchAndGetUnifiedSchema as jest.Mock).mockResolvedValue(mockSchemaResult);
-
     await generateSdk(mockConfig);
 
     expect(generateTsArtifacts).toHaveBeenCalledWith({
@@ -66,6 +68,20 @@ describe('generateSdk', () => {
 
     await generateSdk(mockConfig);
 
+    expect(console.error).toHaveBeenCalledWith(
+      'Error in generateSdk: ',
+      mockError,
+    );
+  });
+
+  it('should not call generateTsArtifacts if an error occurs in deleteFolderIfExists', async () => {
+    const mockError = new Error('Delete folder error');
+    (deleteFolderIfExists as jest.Mock).mockRejectedValue(mockError);
+    console.error = jest.fn();
+
+    await generateSdk(mockConfig);
+
+    expect(generateTsArtifacts).not.toHaveBeenCalled();
     expect(console.error).toHaveBeenCalledWith(
       'Error in generateSdk: ',
       mockError,
