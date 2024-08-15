@@ -4,12 +4,12 @@ import {
   getIntrospectionQuery,
   buildClientSchema,
 } from 'graphql';
-import { GraphqlTypescriptParsedConfig } from '../../src/types';
-import { getUnifiedSchema } from '../../src/utils';
-import { fetchAndGetUnifiedSchema } from '../../src/fetchSchema';
+import { GraphqlTypescriptParsedConfig } from '../src/types';
+import { getUnifiedSchema } from '../src/utils';
+import { fetchAndGetUnifiedSchema } from '../src/fetchSchema';
 
 jest.mock('graphql');
-jest.mock('../../src/utils');
+jest.mock('../src/utils');
 
 const fetchMock = jest.fn();
 globalThis.fetch = fetchMock as unknown as typeof fetch;

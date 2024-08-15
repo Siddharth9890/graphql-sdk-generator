@@ -6,10 +6,10 @@ import { codegen } from '@graphql-codegen/core';
 
 import * as graphqlTools from '@graphql-tools/utils';
 import * as graphqlCodegen from '@graphql-codegen/core';
-import { generateOperations, pathExists, writeFile } from '../../src/utils';
-import { compileTS } from '../../src/generateCode/compileTS';
-import { generateTypesForApi } from '../../src/generateCode/generateTypes';
-import { generateTsArtifacts } from '../../src/generateCode/generateArtificats';
+import { generateOperations, pathExists, writeFile } from '../src/utils';
+import { compileTS } from '../src/generateCode/compileTS';
+import { generateTypesForApi } from '../src/generateCode/generateTypes';
+import { generateTsArtifacts } from '../src/generateCode/generateArtificats';
 
 // Mock modules
 jest.mock('fs/promises');
@@ -25,14 +25,14 @@ jest.mock('@graphql-codegen/typescript-operations', () => ({
 jest.mock('@graphql-codegen/typescript-resolvers', () => ({
   plugin: jest.fn(),
 }));
-jest.mock('../../src/utils');
-jest.mock('../../src/generateCode/compileTS');
-jest.mock('../../src/generateCode/generateTypes');
+jest.mock('../src/utils');
+jest.mock('../src/generateCode/compileTS');
+jest.mock('../src/generateCode/generateTypes');
 jest.mock('@graphql-tools/utils', () => ({
   printSchemaWithDirectives: jest.fn(),
 }));
 
-jest.mock('../../src/utils', () => ({
+jest.mock('../src/utils', () => ({
   memoize1: jest.fn(),
   pathExists: jest.fn(),
   generateOperations: jest.fn(),
@@ -120,7 +120,7 @@ describe('generateTsArtifacts', () => {
 
   it('should write generated types file', async () => {
     await generateTsArtifacts(mockConfig);
-    
+
     expect(writeFile).toHaveBeenCalled();
   });
 

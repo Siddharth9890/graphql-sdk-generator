@@ -33,7 +33,7 @@ import { getDefinedRootType, getRootTypeNames } from '@graphql-tools/utils';
 let operationVariables: VariableDefinitionNode[] = [];
 let fieldTypeMap = new Map();
 
-function addOperationVariable(variable: VariableDefinitionNode) {
+export function addOperationVariable(variable: VariableDefinitionNode) {
   operationVariables.push(variable);
 }
 
@@ -180,7 +180,7 @@ function buildOperationAndCollectVariables({
   };
 }
 
-function resolveSelectionSet({
+export function resolveSelectionSet({
   parent,
   type,
   models,
@@ -376,7 +376,7 @@ function resolveSelectionSet({
   }
 }
 
-function resolveVariable(
+export function resolveVariable(
   arg: GraphQLArgument,
   name?: string,
 ): VariableDefinitionNode {

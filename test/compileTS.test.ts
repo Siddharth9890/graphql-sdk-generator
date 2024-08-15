@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { normalize } from 'path';
-import { compileTS } from '../../src/generateCode/compileTS';
+import { compileTS } from '../src/generateCode/compileTS';
 
 // Mock TypeScript functions
 jest.mock('typescript', () => ({

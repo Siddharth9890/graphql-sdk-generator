@@ -2,8 +2,8 @@ import fs from 'fs/promises';
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, parse } from 'graphql';
 import { join, dirname } from 'path';
 
-import { buildOperationNodeForField } from '../../src/generateCode/customNaming';
-import { deleteFolderIfExists, generateOperations, getUnifiedSchema, mkdir, pathExists, printWithCache, writeFile, writeJSON } from '../../src/utils';
+import { buildOperationNodeForField } from '../src/generateCode/customNaming';
+import { deleteFolderIfExists, generateOperations, getUnifiedSchema, mkdir, pathExists, printWithCache, writeFile, writeJSON } from '../src/utils';
 
 // Mocking fs module
 jest.mock('fs/promises', () => ({
