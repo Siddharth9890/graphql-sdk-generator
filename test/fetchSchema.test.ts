@@ -2,7 +2,6 @@ import {
   GraphQLSchema,
   IntrospectionQuery,
   getIntrospectionQuery,
-  buildClientSchema,
 } from 'graphql';
 import { GraphqlTypescriptParsedConfig } from '../src/types';
 import { getUnifiedSchema } from '../src/utils';
@@ -65,7 +64,6 @@ describe('fetchAndGetUnifiedSchema', () => {
   it('should log debug information if debug is true', async () => {
     const debugConfig = { ...mockConfig, debug: true };
     const mockSchema = {} as GraphQLSchema;
-    const mockRawSource = {} as IntrospectionQuery;
     (getUnifiedSchema as jest.Mock).mockReturnValue(mockSchema);
     fetchMock.mockResolvedValue(mockResponse);
 

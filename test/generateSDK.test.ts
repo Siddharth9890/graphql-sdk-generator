@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { GraphqlTypescriptParsedConfig } from '../src/types';
 import { fetchAndGetUnifiedSchema } from '../src/fetchSchema';
 import { deleteFolderIfExists } from '../src/utils';

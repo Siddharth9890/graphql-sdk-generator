@@ -9,7 +9,28 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "build": "rm -rf build && tsc"
+    "build": "rm -rf build && tsc",
+    "prepare": "husky install",
+    "postinstall": "husky install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Siddharth9890/graphql-sdk-generator.git"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "pnpm format",
+      "pnpm lint"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -39,9 +60,12 @@
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-promise": "^6.1.1",
     "execa": "^9.3.0",
+    "husky": "^8.0.3",
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.4",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4"
   }
 }

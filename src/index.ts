@@ -21,13 +21,13 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
     baseDirectory: { type: 'string', default: './', nullable: true },
     url: { type: 'string' },
     sdkName: { type: 'string' },
-    fileType: { type: 'string' },
+    fileType: { type: 'string', pattern: '^(js|ts)$' },
     directoryName: {
       type: 'string',
       default: 'graphqlTypescriptTypes',
       nullable: true,
     },
-    depth: { type: 'integer', default: 2, nullable: true },
+    depth: { type: 'integer', default: 2, nullable: true, minimum: 1 },
     debug: { type: 'boolean', default: false, nullable: true },
     toGenerateSchemaFile: { type: 'boolean', default: true, nullable: true },
     headers: {
@@ -53,7 +53,6 @@ export const init = async () => {
       .parse(process.argv);
 
     const options = program.opts<{ configPath: string }>();
-    // options.configPath = './base-config.json';
 
     const configPath = path.resolve(process.cwd(), options.configPath);
 

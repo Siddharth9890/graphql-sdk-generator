@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Command } from 'commander';
 import { generateSdk } from '../src/generateCode/generateSDK';
 import { init } from '../src';
 
@@ -47,7 +46,7 @@ describe('Graphql Typescript Types CLI', () => {
   });
 
   it('should validate config and call generateSdk with valid config', async () => {
-    const result = await init();
+    await init();
 
     expect(generateSdk).toHaveBeenCalledWith(
       expect.objectContaining(mockConfig),

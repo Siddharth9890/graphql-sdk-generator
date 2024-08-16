@@ -1,9 +1,22 @@
 import fs from 'fs/promises';
-import { GraphQLObjectType, GraphQLSchema, GraphQLString, parse } from 'graphql';
+import {
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  parse,
+} from 'graphql';
 import { join, dirname } from 'path';
 
-import { buildOperationNodeForField } from '../src/generateCode/customNaming';
-import { deleteFolderIfExists, generateOperations, getUnifiedSchema, mkdir, pathExists, printWithCache, writeFile, writeJSON } from '../src/utils';
+import {
+  deleteFolderIfExists,
+  generateOperations,
+  getUnifiedSchema,
+  mkdir,
+  pathExists,
+  printWithCache,
+  writeFile,
+  writeJSON,
+} from '../src/utils';
 
 // Mocking fs module
 jest.mock('fs/promises', () => ({
@@ -30,7 +43,6 @@ const schema = new GraphQLSchema({
 
 describe('getUnifiedSchema', () => {
   it('should return the schema with extensions including sourceMap', () => {
-    
     const result = getUnifiedSchema(schema);
     expect(result.extensions?.sourceMap).toBeDefined();
   });
@@ -48,8 +60,6 @@ describe('pathExists', () => {
     const result = await pathExists('/some/invalid-path');
     expect(result).toBe(false);
   });
-
-  
 });
 
 describe('writeJSON', () => {
@@ -138,14 +148,11 @@ describe('printWithCache', () => {
 
 describe('generateOperations', () => {
   it('should generate operations based on the schema and selection set depth', () => {
-    
     const sources = generateOperations(schema, 2);
     expect(sources).toBeInstanceOf(Array);
   });
 
   it('should use custom naming for operations', () => {
-    
-    
     const sources = generateOperations(schema, 2);
     expect(sources[0].document.definitions[0].name.value).toBe('helloQuery');
   });

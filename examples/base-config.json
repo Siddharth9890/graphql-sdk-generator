@@ -1,7 +1,5 @@
 {
   "url": "",
   "sdkName": "test",
-  "fileType": "ts",
-  "headers": { "x-api-key": "sample-" },
-  "debug": true
+  "fileType": "ts"
 }

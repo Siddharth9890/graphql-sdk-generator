@@ -9,14 +9,11 @@ import {
   GraphQLUnionType,
   Kind,
   OperationTypeNode,
-  VariableDefinitionNode,
 } from 'graphql';
 import {
-  addOperationVariable,
   buildOperationNodeForField,
   hasCircularRef,
   resetFieldMap,
-  resetOperationVariables,
   resolveField,
   resolveSelectionSet,
   resolveVariable,

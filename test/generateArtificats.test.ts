@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
-import path, { join, relative, resolve } from 'path';
+import path from 'path';
 import { GraphQLSchema, IntrospectionQuery } from 'graphql';
-import ts from 'typescript';
 import { codegen } from '@graphql-codegen/core';
 
 import * as graphqlTools from '@graphql-tools/utils';
