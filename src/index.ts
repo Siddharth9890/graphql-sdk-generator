@@ -79,7 +79,7 @@ export const init = async () => {
       console.log('\n-----------------------------');
       console.error('Invalid configuration:', validate.errors);
       console.log('\n-----------------------------');
-      process.exit(1);
+      return false;
     }
 
     await generateSdk(config);
@@ -87,8 +87,12 @@ export const init = async () => {
     console.log('\n-----------------------------');
     console.error('Something went wrong!:', error);
     console.log('\n-----------------------------');
-    process.exit(1);
+    return false;
   }
 };
 
-init();
+if (require.main === module) {
+  init().then((success) => {
+    process.exit(success ? 0 : 1);
+  });
+}

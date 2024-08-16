@@ -10,6 +10,11 @@ jest.mock('typescript', () => ({
   ModuleKind: { CommonJS: 1 },
 }));
 
+jest.mock('path', () => ({
+  ...jest.requireActual('path'),
+  normalize: jest.fn(),
+}));
+
 describe('compileTS', () => {
   let createCompilerHostMock: jest.Mock;
   let createProgramMock: jest.Mock;
@@ -49,5 +54,61 @@ describe('compileTS', () => {
 
     // Verify that emit is called
     expect(emitMock).toHaveBeenCalled();
+  });
+});
+
+describe('compileTS', () => {
+  it('should call host.writeFile when fileName matches an entry in outputFilePaths', () => {
+    const tsFilePath = '/path/to/file.ts';
+    const module = ts.ModuleKind.CommonJS;
+    const outputFilePaths = ['/output/path/file.js'];
+
+    const mockWriteFile = jest.fn();
+    const mockHost = ts.createCompilerHost({});
+    mockHost.writeFile = mockWriteFile;
+
+    (ts.createCompilerHost as jest.Mock).mockReturnValue(mockHost);
+    (normalize as jest.Mock).mockImplementation((path) => path);
+
+    compileTS(tsFilePath, module, outputFilePaths);
+
+    const expectedFileName = '/output/path/file.js';
+
+    // Simulate the writeFile being called by the host
+    mockHost.writeFile(expectedFileName, 'content', false, undefined);
+
+    expect(mockWriteFile).toHaveBeenCalledWith(
+      expectedFileName,
+      'content',
+      false,
+      undefined,
+    );
+  });
+
+  it('should not call host.writeFile when fileName does not match any entry in outputFilePaths', () => {
+    const tsFilePath = '/path/to/file.ts';
+    const module = ts.ModuleKind.CommonJS;
+    const outputFilePaths = ['/output/path/file.js'];
+
+    const mockWriteFile = jest.fn();
+    const mockHost = ts.createCompilerHost({});
+    mockHost.writeFile = mockWriteFile;
+
+    (ts.createCompilerHost as jest.Mock).mockReturnValue(mockHost);
+    (normalize as jest.Mock).mockImplementation((path) => path);
+
+    compileTS(tsFilePath, module, outputFilePaths);
+
+    const nonMatchingFileName = '/output/path/otherFile.js';
+
+    // Simulate the writeFile being called by the host
+    mockHost.writeFile(nonMatchingFileName, 'content', false, undefined);
+
+    expect(mockWriteFile).not.toHaveBeenCalledWith(
+      nonMatchingFileName,
+      'content',
+      false,
+      undefined,
+    );
   });
 });
