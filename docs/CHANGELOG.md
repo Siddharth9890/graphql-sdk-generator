@@ -1,12 +1,11 @@
 # 1.0.0-develop.1 (2024-08-16)
 
-
 ### Features
 
-* added ajv and commander ([76b94cb](https://github.com/Siddharth9890/graphql-sdk-generator/commit/76b94cb18f4417ae46655a574b6fcc66d2d0397e))
-* added debug mode ([ea9b844](https://github.com/Siddharth9890/graphql-sdk-generator/commit/ea9b8445295b066c6310545593a46d7e0d9d1cab))
-* **ci/cd:** added husky, commit lint ([c50a2dd](https://github.com/Siddharth9890/graphql-sdk-generator/commit/c50a2ddf6bbc68f128458685667fff3c9a279a2d))
-* inital tests ([09a1dce](https://github.com/Siddharth9890/graphql-sdk-generator/commit/09a1dce430ba38212db6ede98a27e699927526b5))
-* initial test code ([f33e5ea](https://github.com/Siddharth9890/graphql-sdk-generator/commit/f33e5ea48099421f8321697641caa81c4d9f592f))
-* jest setup and ci/cd for tests ([ef7718a](https://github.com/Siddharth9890/graphql-sdk-generator/commit/ef7718a66ce968587bdbfd5751efaca2c81d1fed))
-* tests are complete ([d951541](https://github.com/Siddharth9890/graphql-sdk-generator/commit/d9515413fb64c796e90ba227d6c9bd2b6155a8b1))
+- added ajv and commander ([76b94cb](https://github.com/Siddharth9890/graphql-sdk-generator/commit/76b94cb18f4417ae46655a574b6fcc66d2d0397e))
+- added debug mode ([ea9b844](https://github.com/Siddharth9890/graphql-sdk-generator/commit/ea9b8445295b066c6310545593a46d7e0d9d1cab))
+- **ci/cd:** added husky, commit lint ([c50a2dd](https://github.com/Siddharth9890/graphql-sdk-generator/commit/c50a2ddf6bbc68f128458685667fff3c9a279a2d))
+- inital tests ([09a1dce](https://github.com/Siddharth9890/graphql-sdk-generator/commit/09a1dce430ba38212db6ede98a27e699927526b5))
+- initial test code ([f33e5ea](https://github.com/Siddharth9890/graphql-sdk-generator/commit/f33e5ea48099421f8321697641caa81c4d9f592f))
+- jest setup and ci/cd for tests ([ef7718a](https://github.com/Siddharth9890/graphql-sdk-generator/commit/ef7718a66ce968587bdbfd5751efaca2c81d1fed))
+- tests are complete ([d951541](https://github.com/Siddharth9890/graphql-sdk-generator/commit/d9515413fb64c796e90ba227d6c9bd2b6155a8b1))
