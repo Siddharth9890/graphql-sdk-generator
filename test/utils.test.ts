@@ -18,7 +18,6 @@ import {
   writeJSON,
 } from '../src/utils';
 
-// Mocking fs module
 jest.mock('fs/promises', () => ({
   stat: jest.fn(),
   access: jest.fn(),
@@ -142,7 +141,7 @@ describe('printWithCache', () => {
     const result1 = printWithCache(document);
     const result2 = printWithCache(document);
 
-    expect(result1).toBe(result2); // Cached result should be the same
+    expect(result1).toBe(result2);
   });
 });
 

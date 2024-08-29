@@ -7,15 +7,15 @@ import Ajv, { JSONSchemaType } from 'ajv';
 import { Command } from 'commander';
 
 import {
-  GraphqlTypescriptInputConfig,
-  GraphqlTypescriptParsedConfig,
+  GraphqlSDKGeneratorInputConfig,
+  GraphqlSDKGeneratorParsedConfig,
 } from './types';
 import { generateSdk } from './generateCode/generateSDK';
 
 const ajv = new Ajv({ useDefaults: true });
 const program = new Command();
 
-const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
+const schema: JSONSchemaType<GraphqlSDKGeneratorInputConfig> = {
   type: 'object',
   properties: {
     baseDirectory: { type: 'string', default: './', nullable: true },
@@ -24,7 +24,7 @@ const schema: JSONSchemaType<GraphqlTypescriptInputConfig> = {
     fileType: { type: 'string', pattern: '^(js|ts)$' },
     directoryName: {
       type: 'string',
-      default: 'graphqlTypescriptTypes',
+      default: 'graphqlSDKGenerator',
       nullable: true,
     },
     depth: { type: 'integer', default: 2, nullable: true, minimum: 1 },
@@ -47,7 +47,7 @@ export const init = async () => {
     program
       .version('1.0.0')
       .description(
-        'Graphql Typescript Types a CLI tool that generates ready to use SDK using Graphql URL.',
+        'GraphQL SDK Generator a CLI tool that generates ready to use SDK using GraphQL Schemas.',
       )
       .requiredOption('-c, --configPath <path>', 'Path to config file')
       .parse(process.argv);
@@ -57,9 +57,9 @@ export const init = async () => {
     const configPath = path.resolve(process.cwd(), options.configPath);
 
     const configFile = await fs.readFile(configPath, 'utf-8');
-    const config: GraphqlTypescriptParsedConfig = JSON.parse(
+    const config: GraphqlSDKGeneratorParsedConfig = JSON.parse(
       configFile,
-    ) as GraphqlTypescriptParsedConfig;
+    ) as GraphqlSDKGeneratorParsedConfig;
 
     const validate = ajv.compile(schema);
     const valid = validate(config);
@@ -82,6 +82,7 @@ export const init = async () => {
     }
 
     await generateSdk(config);
+    return true;
   } catch (error) {
     console.log('\n-----------------------------');
     console.error('Something went wrong!:', error);

@@ -3,7 +3,6 @@ import path from 'path';
 import { generateSdk } from '../src/generateCode/generateSDK';
 import { init } from '../src';
 
-// Mock dependencies
 jest.mock('fs/promises');
 jest.mock('path');
 jest.mock('../src/generateCode/generateSDK');
@@ -72,17 +71,15 @@ describe('Graphql Typescript Types CLI', () => {
 
     await init();
 
-    expect(generateSdk).toHaveBeenCalledWith(
-      expect.objectContaining({
-        ...minimalConfig,
-        baseDirectory: './', // Update expectation to './'
-        directoryName: 'graphqlTypescriptTypes',
-        depth: 2,
-        debug: false,
-        toGenerateSchemaFile: true,
-        headers: {},
-      }),
-    );
+    expect(generateSdk).toHaveBeenCalledWith({
+      ...minimalConfig,
+      baseDirectory: './',
+      directoryName: 'graphqlSDKGenerator',
+      depth: 2,
+      debug: false,
+      toGenerateSchemaFile: true,
+      headers: {},
+    });
   });
 
   it('should log debug information when debug is true', async () => {

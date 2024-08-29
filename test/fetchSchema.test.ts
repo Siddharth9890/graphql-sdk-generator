@@ -3,7 +3,7 @@ import {
   IntrospectionQuery,
   getIntrospectionQuery,
 } from 'graphql';
-import { GraphqlTypescriptParsedConfig } from '../src/types';
+import { GraphqlSDKGeneratorParsedConfig } from '../src/types';
 import { getUnifiedSchema } from '../src/utils';
 import { fetchAndGetUnifiedSchema } from '../src/fetchSchema';
 
@@ -14,7 +14,7 @@ const fetchMock = jest.fn();
 globalThis.fetch = fetchMock as unknown as typeof fetch;
 
 describe('fetchAndGetUnifiedSchema', () => {
-  const mockConfig: GraphqlTypescriptParsedConfig = {
+  const mockConfig: GraphqlSDKGeneratorParsedConfig = {
     url: 'https://example.com/graphql',
     headers: { Authorization: 'Bearer token' },
     debug: false,
@@ -74,7 +74,9 @@ describe('fetchAndGetUnifiedSchema', () => {
     expect(consoleLogMock).toHaveBeenCalledWith(
       '\n-----------------------------',
     );
-    expect(consoleLogMock).toHaveBeenCalledWith(`URL: ${debugConfig.url}`);
+    expect(consoleLogMock).toHaveBeenCalledWith(
+      `Network Details URL: ${debugConfig.url}`,
+    );
     expect(consoleLogMock).toHaveBeenCalledWith('Method: POST');
     expect(consoleLogMock).toHaveBeenCalledWith('Headers:');
     expect(consoleLogMock).toHaveBeenCalledWith(
