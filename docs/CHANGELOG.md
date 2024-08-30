@@ -1,9 +1,15 @@
-# [1.0.0-develop.3](https://github.com/Siddharth9890/graphql-sdk-generator/compare/v1.0.0-develop.2...v1.0.0-develop.3) (2024-08-30)
+# [1.0.0-develop.4](https://github.com/Siddharth9890/graphql-sdk-generator/compare/v1.0.0-develop.3...v1.0.0-develop.4) (2024-08-30)
 
 
 ### Bug Fixes
 
-* fixed husky error ([859489c](https://github.com/Siddharth9890/graphql-sdk-generator/commit/859489c0cd07f6c166a167378fdfc606780583e4))
+* remove prepare command ([df96855](https://github.com/Siddharth9890/graphql-sdk-generator/commit/df96855d0860d6916a6d4857e9f9f19b20cdb3b3))
+
+# [1.0.0-develop.3](https://github.com/Siddharth9890/graphql-sdk-generator/compare/v1.0.0-develop.2...v1.0.0-develop.3) (2024-08-30)
+
+### Bug Fixes
+
+- fixed husky error ([859489c](https://github.com/Siddharth9890/graphql-sdk-generator/commit/859489c0cd07f6c166a167378fdfc606780583e4))
 
 # [1.0.0-develop.2](https://github.com/Siddharth9890/graphql-sdk-generator/compare/v1.0.0-develop.1...v1.0.0-develop.2) (2024-08-29)
 
