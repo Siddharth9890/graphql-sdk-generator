@@ -1,3 +1,10 @@
+# [1.0.0-develop.2](https://github.com/Siddharth9890/graphql-sdk-generator/compare/v1.0.0-develop.1...v1.0.0-develop.2) (2024-08-29)
+
+
+### Features
+
+* added readme, improved tests ([dcdc386](https://github.com/Siddharth9890/graphql-sdk-generator/commit/dcdc38613d37014fbe351bf2206e701065c7cf07))
+
 # 1.0.0-develop.1 (2024-08-16)
 
 ### Features
