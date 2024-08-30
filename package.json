@@ -12,8 +12,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "build": "rm -rf build && tsc",
-    "prepare": "husky install",
-    "postinstall": "husky install"
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=18.0.0"
