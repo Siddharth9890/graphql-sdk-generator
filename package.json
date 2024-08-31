@@ -1,17 +1,17 @@
 {
   "name": "graphql-sdk-generator",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "The GraphQL SDK Generator converts GraphQL schemas into JavaScript or TypeScript code, enabling smooth autocomplete and validation for your GraphQL queries.",
+  "main": "dist/index.js",
+  "types": "dist/types.d.ts",
+  "bin": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "test": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "build": "rm -rf build && tsc",
-    "prepare": "husky install",
-    "postinstall": "husky install"
+    "build": "rm -rf build && tsc"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -32,8 +32,15 @@
     "type": "git",
     "url": "git+https://github.com/Siddharth9890/graphql-sdk-generator.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "graphql-sdk-generator",
+    "graphql",
+    "sdk",
+    "generator",
+    "typescript",
+    "graphql-generator"
+  ],
+  "author": "Siddharth <siddharth.a9890@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@graphql-codegen/core": "^4.0.2",

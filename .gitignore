@@ -5,3 +5,5 @@ graphqlTypescriptTypes
 coverage
 
 build
+
+dist

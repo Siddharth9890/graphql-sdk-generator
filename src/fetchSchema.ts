@@ -5,10 +5,10 @@ import {
   buildClientSchema,
 } from 'graphql';
 import { getUnifiedSchema } from './utils';
-import { GraphqlTypescriptParsedConfig } from './types';
+import { GraphqlSDKGeneratorParsedConfig } from './types';
 
 export async function fetchAndGetUnifiedSchema(
-  config: GraphqlTypescriptParsedConfig,
+  config: GraphqlSDKGeneratorParsedConfig,
 ): Promise<{
   unifiedSchema: GraphQLSchema;
   rawSource: IntrospectionQuery;
@@ -28,7 +28,7 @@ export async function fetchAndGetUnifiedSchema(
 
     if (config.debug) {
       console.log('\n-----------------------------');
-      console.log(`URL: ${config.url}`);
+      console.log(`Network Details URL: ${config.url}`);
       console.log(`Method: POST`);
       console.log('Headers:');
       for (const [key, value] of Object.entries({

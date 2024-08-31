@@ -1,10 +1,9 @@
-import { GraphqlTypescriptParsedConfig } from '../src/types';
+import { GraphqlSDKGeneratorParsedConfig } from '../src/types';
 import { fetchAndGetUnifiedSchema } from '../src/fetchSchema';
 import { deleteFolderIfExists } from '../src/utils';
 import { generateSdk } from '../src/generateCode/generateSDK';
 import { generateTsArtifacts } from '../src/generateCode/generateArtificats';
 
-// Mock the dependencies
 jest.mock('path', () => ({
   join: jest.fn((a, b) => `${a}/${b}`),
 }));
@@ -13,7 +12,7 @@ jest.mock('../src/utils');
 jest.mock('../src/generateCode/generateArtificats');
 
 describe('generateSdk', () => {
-  const mockConfig: GraphqlTypescriptParsedConfig = {
+  const mockConfig: GraphqlSDKGeneratorParsedConfig = {
     baseDirectory: '/base',
     directoryName: 'sdk',
     fileType: 'ts',

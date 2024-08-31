@@ -1,10 +1,10 @@
 import { join } from 'path';
 import { fetchAndGetUnifiedSchema } from '../fetchSchema';
-import { GraphqlTypescriptParsedConfig } from '../types';
+import { GraphqlSDKGeneratorParsedConfig } from '../types';
 import { deleteFolderIfExists } from '../utils';
 import { generateTsArtifacts } from './generateArtificats';
 
-export async function generateSdk(config: GraphqlTypescriptParsedConfig) {
+export async function generateSdk(config: GraphqlSDKGeneratorParsedConfig) {
   try {
     await deleteFolderIfExists(
       join(config.baseDirectory, config.directoryName),

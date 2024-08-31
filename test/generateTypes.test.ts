@@ -3,7 +3,6 @@ import { GraphQLSchema } from 'graphql';
 import * as tsBasePlugin from '@graphql-codegen/typescript';
 import { generateTypesForApi } from '../src/generateCode/generateTypes';
 
-// Mock the codegen function
 jest.mock('@graphql-codegen/core', () => ({
   codegen: jest.fn(),
 }));

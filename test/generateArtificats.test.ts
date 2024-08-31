@@ -10,7 +10,6 @@ import { compileTS } from '../src/generateCode/compileTS';
 import { generateTypesForApi } from '../src/generateCode/generateTypes';
 import { generateTsArtifacts } from '../src/generateCode/generateArtificats';
 
-// Mock modules
 jest.mock('fs/promises');
 jest.mock('path');
 jest.mock('graphql');

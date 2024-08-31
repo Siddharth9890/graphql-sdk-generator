@@ -94,7 +94,6 @@ export function buildOperationNodeForField({
     rootTypeNames,
   });
 
-  // attach variables
   (operationNode as any).variableDefinitions = [...operationVariables];
 
   resetOperationVariables();
@@ -394,7 +393,6 @@ export function resolveVariable(
     if (isNonNullType(type)) {
       return {
         kind: Kind.NON_NULL_TYPE,
-        // for v16 compatibility
         type: resolveVariableType(type.ofType) as any,
       };
     }

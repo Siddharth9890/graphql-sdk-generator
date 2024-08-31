@@ -1,4 +1,4 @@
-export interface GraphqlTypescriptInputConfig {
+export interface GraphqlSDKGeneratorInputConfig {
   baseDirectory?: string;
   url: string;
   sdkName: string;
@@ -10,7 +10,7 @@ export interface GraphqlTypescriptInputConfig {
   debug?: boolean;
 }
 
-export interface GraphqlTypescriptParsedConfig {
+export interface GraphqlSDKGeneratorParsedConfig {
   baseDirectory: string;
   url: string;
   sdkName: string;

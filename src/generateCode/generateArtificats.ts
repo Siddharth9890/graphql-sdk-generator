@@ -93,7 +93,7 @@ export async function generateTsArtifacts({
   }
   const codegenOutput =
     '// @ts-nocheck\n' +
-    '/* This file is auto generated \n' +
+    '/* This file is auto generated using graphql-sdk-generator \n' +
     'Do not make changes to this file */\n\n' +
     (
       await codegen({
@@ -139,7 +139,7 @@ export async function generateTsArtifacts({
                   if (codeAst) {
                     const content =
                       '// @ts-nocheck\n' +
-                      '/* This file is auto generated \n' +
+                      '/* This file is auto generated using graphql-sdk-generator \n' +
                       'Do not make changes to this file */ \n' +
                       codeAst;
                     await writeFile(
