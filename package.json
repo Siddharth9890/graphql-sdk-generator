@@ -1,7 +1,7 @@
 {
   "name": "graphql-sdk-generator",
   "version": "0.0.0",
-  "description": "GraphQL SDK generator translates GraphQL Schema to code enabling you to get smooth auto completion and validation for your GraphQL Schema",
+  "description": "The GraphQL SDK Generator converts GraphQL schemas into JavaScript or TypeScript code, enabling smooth autocomplete and validation for your GraphQL queries.",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
   "bin": "dist/index.js",

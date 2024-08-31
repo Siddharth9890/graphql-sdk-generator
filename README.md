@@ -2,7 +2,7 @@
 
 # GraphQL SDK Generator
 
-GraphQL SDK generator translates GraphQL Schema to Javascript, Typescript code enabling you to get smooth auto completion and validation for your GraphQL Schema
+The GraphQL SDK Generator converts GraphQL schemas into JavaScript or TypeScript code, enabling smooth autocomplete and validation for your GraphQL queries.
 
 [![NPM version][npm-image]][npm-url]
 [![Run Eslint & Test cases](https://github.com/Siddharth9890/graphql-sdk-generator/actions/workflows/test.yaml/badge.svg)](https://github.com/Siddharth9890/graphql-sdk-generator/actions/workflows/test.yaml)
@@ -14,11 +14,11 @@ Read this [quick start guide](https://docs.siddharth9890.com/graphql-sdk-generat
 
 ## Features
 
-- ✅ Type completion & Type validation
+- ✅ Type completion & validation for enhanced developer experience
 - 🍃 Few runtime dependencies as compared to GraphQL Mesh
 - 🐎 Generate client only if schema changes
-- 🥃 Can pass custom headers to client
-- 🚂 Works in browser, Node thanks to [graphql-request](https://www.npmjs.com/package/graphql-request)
+- 🥃 Supports custom headers for requests
+- 🚂  Compatible with both browsers and Node.js, thanks to[graphql-request](https://www.npmjs.com/package/graphql-request)
 
 ## Example
 
@@ -39,7 +39,7 @@ npm install -g graphql-sdk-generator
 }
 ```
 
-3. Then run the graphql-sdk-generator command to generate the client inside a directory. And after the code is generated you need to add graphql-request && @graphql-typed-document-node/core as dependency to make requests
+3. Run the generator and install additional dependencies required for making requests:
 
 ```bash
 // use a custom json file path
@@ -47,7 +47,7 @@ graphql-sdk-generator -c config.json
 npm i @graphql-typed-document-node/core graphql-request
 ```
 
-4. Then we can use the client to write methods and pass data
+4. Use the generated client to write methods and send data:
 
 ```typescript
 import { GraphQLClient } from 'graphql-request';
